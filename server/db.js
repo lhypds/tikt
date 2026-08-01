@@ -14,8 +14,7 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL UNIQUE COLLATE NOCASE,
-    age INTEGER NOT NULL CHECK (age BETWEEN 1 AND 130),
-    email TEXT NOT NULL,
+    birthdate TEXT,
     created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
   );
 
@@ -43,6 +42,29 @@ db.exec(`
   SELECT DISTINCT user_id, name FROM knots;
 `);
 
+// One-time migrations: drop legacy age/email columns, add birthdate.
+const userColumns = db.prepare("SELECT name FROM pragma_table_info('users')").all().map((column) => column.name);
+if (userColumns.includes("age") || userColumns.includes("email")) {
+  db.exec(`
+    PRAGMA foreign_keys = OFF;
+    BEGIN;
+    CREATE TABLE users_migrated (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL UNIQUE COLLATE NOCASE,
+      birthdate TEXT,
+      created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+    );
+    INSERT INTO users_migrated (id, username, created_at)
+    SELECT id, username, created_at FROM users;
+    DROP TABLE users;
+    ALTER TABLE users_migrated RENAME TO users;
+    COMMIT;
+    PRAGMA foreign_keys = ON;
+  `);
+} else if (!userColumns.includes("birthdate")) {
+  db.exec("ALTER TABLE users ADD COLUMN birthdate TEXT");
+}
+
 function withTransaction(run) {
   db.exec("BEGIN");
   try {
@@ -56,14 +78,14 @@ function withTransaction(run) {
 }
 
 const selectUserByName = db.prepare(`
-  SELECT id, username, age, email, created_at AS createdAt
+  SELECT id, username, birthdate, created_at AS createdAt
   FROM users
   WHERE username = ?
 `);
 
 const insertUser = db.prepare(`
-  INSERT INTO users (username, age, email)
-  VALUES (?, ?, ?)
+  INSERT INTO users (username, birthdate)
+  VALUES (?, ?)
 `);
 
 const insertKnot = db.prepare(`
@@ -91,7 +113,7 @@ const selectNames = db.prepare(`
   LEFT JOIN knots k ON k.user_id = kn.user_id AND k.name = kn.name
   WHERE kn.user_id = ?
   GROUP BY kn.id
-  ORDER BY COALESCE(MAX(k.time), kn.created_at) DESC
+  ORDER BY COUNT(k.id) DESC, COALESCE(MAX(k.time), kn.created_at) DESC
   LIMIT ?
 `);
 
@@ -151,8 +173,8 @@ export function getUser(username) {
   return selectUserByName.get(username) ?? null;
 }
 
-export function createUser({ username, age, email }) {
-  insertUser.run(username, age, email);
+export function createUser({ username, birthdate }) {
+  insertUser.run(username, birthdate);
   return getUser(username);
 }
 

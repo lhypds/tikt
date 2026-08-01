@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { useTranslation } from "react-i18next";
 import * as api from "../../api.js";
 import { ActionButton, Link, useNavigate } from "../../ui/index.js";
+import { isSoundMuted, setSoundMuted, subscribeSoundMuted } from "../../utils/sound.js";
 import { useAuth } from "../AuthProvider/index.js";
 import KnotModal from "../KnotModal/index.js";
 import LanguageSwitcher from "../LanguageSwitcher/index.js";
@@ -11,6 +12,7 @@ export default function Header({ back = false }) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [creating, setCreating] = useState(false);
+  const muted = useSyncExternalStore(subscribeSoundMuted, isSoundMuted);
 
   async function handleCreate(name) {
     await api.createKnotName(name);
@@ -54,13 +56,34 @@ export default function Header({ back = false }) {
                 <path d="M12 7v5l3 2" />
               </svg>
             </ActionButton>
-            <ActionButton tooltip={t("header.account")} onClick={() => navigate("/account")}>
-              <svg viewBox="0 0 24 24">
-                <circle cx="12" cy="8" r="4" />
-                <path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" />
-              </svg>
-            </ActionButton>
           </>
+        )}
+        <ActionButton
+          tooltip={t(muted ? "header.unmute" : "header.mute")}
+          aria-pressed={muted}
+          onClick={() => setSoundMuted(!muted)}
+        >
+          {muted ? (
+            <svg viewBox="0 0 24 24">
+              <path d="M11 5 6 9H3v6h3l5 4z" />
+              <path d="m16 9 5 6" />
+              <path d="m21 9-5 6" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24">
+              <path d="M11 5 6 9H3v6h3l5 4z" />
+              <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+              <path d="M18.5 6a9 9 0 0 1 0 12" />
+            </svg>
+          )}
+        </ActionButton>
+        {user && (
+          <ActionButton tooltip={t("header.account")} onClick={() => navigate("/account")}>
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" />
+            </svg>
+          </ActionButton>
         )}
         <LanguageSwitcher />
       </span>

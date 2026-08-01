@@ -40,7 +40,6 @@ export default function KnotModal({ isOpen, title, submitLabel, initialName = ""
             setName(event.target.value);
             setError("");
           }}
-          placeholder={t("knots.namePlaceholder")}
           aria-label={t("knots.namePlaceholder")}
           maxLength={48}
           autoFocus

@@ -1,22 +1,30 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import * as api from "../../api.js";
 import { IntensityMeter } from "../../ui/index.js";
-import {
-  createPressGestureState,
-  createPressureSupport,
-  observePressureReading,
-  readReliablePointerPressure,
-  readReliableTouchForce,
-  resetPressGestureState,
-  resetPressureSupportGesture,
-} from "../../utils/pressure.js";
+import { playIntensityBlip, startPressTone, stopPressTone, updatePressTone } from "../../utils/sound.js";
 import Header from "../Header/index.js";
+
+const TILE_TARGET = 140;
+const MAX_COLS = 8;
+
+function computeGrid(width, height, columnGap, rowGap) {
+  let cols = Math.max(3, Math.min(MAX_COLS, Math.floor((width + columnGap) / (TILE_TARGET + columnGap))));
+  let tile = (width - (cols - 1) * columnGap) / cols;
+  while (tile > height && cols < MAX_COLS) {
+    cols += 1;
+    tile = (width - (cols - 1) * columnGap) / cols;
+  }
+  const rows = Math.max(1, Math.floor((height + rowGap) / (tile + rowGap)));
+  return { cols, rows };
+}
 
 export default function HomePage() {
   const { t } = useTranslation();
   const [names, setNames] = useState([]);
+  const [page, setPage] = useState(0);
   const [intensity, setIntensity] = useState(1);
+  const [armedIntensity, setArmedIntensity] = useState(null);
   const [pressedName, setPressedName] = useState("");
   const [savingName, setSavingName] = useState("");
   const [message, setMessage] = useState("");
@@ -26,54 +34,65 @@ export default function HomePage() {
   const timerRef = useRef(null);
   const messageTimerRef = useRef(null);
   const intensityRef = useRef(1);
-  const peakIntensityRef = useRef(1);
-  const pressureDrivenRef = useRef(false);
-  const gestureRef = useRef(createPressGestureState());
-  const supportRef = useRef(createPressureSupport());
-  const [pressureSupported, setPressureSupported] = useState(() => supportRef.current.confirmed);
+  const swipeStartRef = useRef(null);
+  const gridRef = useRef(null);
+  const trackRef = useRef(null);
+  const [grid, setGrid] = useState({ cols: 3, rows: 3 });
+
+  useLayoutEffect(() => {
+    const element = gridRef.current;
+    function measure() {
+      const style = getComputedStyle(element);
+      const pad = parseFloat(style.getPropertyValue("--tile-pad")) || 0;
+      const gap = parseFloat(style.getPropertyValue("--tile-gap")) || 0;
+      const width = element.clientWidth - pad * 2;
+      const height = element.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+      if (width <= 0 || height <= 0) return;
+      const next = computeGrid(width, height, gap, gap);
+      setGrid((current) => (current.cols === next.cols && current.rows === next.rows ? current : next));
+      setPage(0);
+    }
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
     function load() {
       api
-        .getKnotNames()
+        .getKnotNames(90)
         .then((data) => !cancelled && setNames(data.names))
         .catch(() => {});
     }
+    function handleKnotsChanged() {
+      load();
+      setArmedIntensity(null);
+      updateIntensity(1);
+    }
     load();
-    window.addEventListener("tikt:knots-changed", load);
+    window.addEventListener("tikt:knots-changed", handleKnotsChanged);
     return () => {
       cancelled = true;
-      window.removeEventListener("tikt:knots-changed", load);
+      window.removeEventListener("tikt:knots-changed", handleKnotsChanged);
     };
   }, []);
 
   function updateIntensity(value) {
     const next = Math.max(1, Math.min(10, Math.ceil(value)));
     intensityRef.current = next;
-    if (activeRef.current) peakIntensityRef.current = Math.max(peakIntensityRef.current, next);
+    if (activeRef.current) updatePressTone(next);
     setIntensity(next);
   }
 
-  // Intensity comes from the pressure sensor only once the device is
-  // confirmed to have a real one; until then the hold-duration ramp stays
-  // in control.
-  function applyPressureValue(value) {
-    if (value === null) return;
-    if (!observePressureReading(supportRef.current, value)) return;
-    setPressureSupported(true);
-    pressureDrivenRef.current = true;
-    const gesture = gestureRef.current;
-    gesture.peak = Math.max(gesture.peak, value);
-    updateIntensity(gesture.peak * 10);
-  }
-
-  function applyTouchForce(rawForce) {
-    applyPressureValue(readReliableTouchForce(rawForce, gestureRef.current.touchForce));
-  }
-
-  function applyPointerPressure(rawPressure) {
-    applyPressureValue(readReliablePointerPressure(rawPressure, gestureRef.current.pointerPressure));
+  // Tapping a meter box pre-arms that intensity: the next tap on a knot tile
+  // records with it directly instead of ramping by hold duration.
+  function selectIntensity(level) {
+    if (activeRef.current || savingName) return;
+    setArmedIntensity(level);
+    updateIntensity(level);
+    playIntensityBlip(level);
   }
 
   function beginRecord(rawName) {
@@ -87,26 +106,25 @@ export default function HomePage() {
     window.clearTimeout(messageTimerRef.current);
     activeRef.current = true;
     activeNameRef.current = recordName;
-    pressureDrivenRef.current = false;
-    resetPressGestureState(gestureRef.current);
-    resetPressureSupportGesture(supportRef.current);
-    peakIntensityRef.current = 1;
     startRef.current = performance.now();
-    updateIntensity(1);
+    updateIntensity(armedIntensity ?? 1);
     setPressedName(recordName);
     setMessage("");
-    timerRef.current = window.setInterval(() => {
-      if (pressureDrivenRef.current) return;
-      updateIntensity(1 + Math.floor((performance.now() - startRef.current) / 400));
-    }, 60);
+    if (armedIntensity === null) {
+      startPressTone(intensityRef.current);
+      timerRef.current = window.setInterval(() => {
+        updateIntensity(1 + Math.floor((performance.now() - startRef.current) / 400));
+      }, 60);
+    }
   }
 
   async function finishRecord() {
     if (!activeRef.current) return;
     activeRef.current = false;
     window.clearInterval(timerRef.current);
+    stopPressTone();
     const recordName = activeNameRef.current;
-    const recordedIntensity = peakIntensityRef.current;
+    const recordedIntensity = intensityRef.current;
     setPressedName("");
     setSavingName(recordName);
 
@@ -118,16 +136,21 @@ export default function HomePage() {
       });
       setNames((current) => {
         const existing = current.find((item) => item.name === recordName);
-        return [
-          { name: recordName, count: (existing?.count || 0) + 1, lastUsed: knot.time },
-          ...current.filter((item) => item.name !== recordName),
-        ].slice(0, 8);
+        const updated = existing
+          ? current.map((item) =>
+              item.name === recordName ? { ...item, count: item.count + 1, lastUsed: knot.time } : item,
+            )
+          : [{ name: recordName, count: 1, lastUsed: knot.time }, ...current];
+        return updated.sort(
+          (a, b) => b.count - a.count || new Date(b.lastUsed || 0) - new Date(a.lastUsed || 0),
+        );
       });
       if (navigator.vibrate) navigator.vibrate(20);
       setMessage(t("record.saved"));
     } catch (requestError) {
       setMessage(requestError.message);
     } finally {
+      setArmedIntensity(null);
       setSavingName("");
       messageTimerRef.current = window.setTimeout(() => {
         setMessage("");
@@ -140,22 +163,16 @@ export default function HomePage() {
     if (!activeRef.current) return;
     activeRef.current = false;
     window.clearInterval(timerRef.current);
+    stopPressTone();
     setPressedName("");
-    updateIntensity(1);
+    updateIntensity(armedIntensity ?? 1);
   }
 
   useEffect(() => {
-    const onForceChange = (event) => {
-      if (!activeRef.current) return;
-      event.preventDefault();
-      const touch = event.changedTouches?.[0] ?? event.touches?.[0];
-      applyTouchForce(touch?.force);
-    };
-    window.addEventListener("touchforcechange", onForceChange, { passive: false });
     return () => {
-      window.removeEventListener("touchforcechange", onForceChange);
       window.clearInterval(timerRef.current);
       window.clearTimeout(messageTimerRef.current);
+      stopPressTone();
     };
   }, []);
 
@@ -170,17 +187,10 @@ export default function HomePage() {
     else cancelRecord();
   }
 
-  function pressureProps(recordName) {
+  function pressProps(recordName) {
     return {
       onContextMenu: (event) => event.preventDefault(),
-      onPointerDown: (event) => {
-        beginRecord(recordName);
-        if (event.pointerType === "pen" || event.pointerType === "touch") applyPointerPressure(event.pressure);
-      },
-      onPointerMove: (event) => {
-        if (!activeRef.current) return;
-        if (event.pointerType === "pen" || event.pointerType === "touch") applyPointerPressure(event.pressure);
-      },
+      onPointerDown: () => beginRecord(recordName),
       onPointerUp: (event) => {
         if (event.pointerType !== "touch") finishRecord();
       },
@@ -188,14 +198,10 @@ export default function HomePage() {
         if (event.pointerType !== "touch") cancelRecord();
       },
       onPointerCancel: cancelRecord,
-      onTouchStart: (event) => {
-        beginRecord(recordName);
-        applyTouchForce(event.touches?.[0]?.force);
-      },
+      onTouchStart: () => beginRecord(recordName),
       onTouchMove: (event) => {
         const touch = event.touches?.[0];
-        if (touch && !pointInside(touch.clientX, touch.clientY, event.currentTarget)) return cancelRecord();
-        if (typeof window.PointerEvent === "undefined") applyTouchForce(touch?.force);
+        if (touch && !pointInside(touch.clientX, touch.clientY, event.currentTarget)) cancelRecord();
       },
       onTouchEnd: (event) => {
         const touch = event.changedTouches?.[0];
@@ -215,30 +221,130 @@ export default function HomePage() {
     };
   }
 
+  const pageSize = grid.cols * grid.rows;
+  const pageCount = Math.max(1, Math.ceil(names.length / pageSize));
+  const currentPage = Math.min(page, pageCount - 1);
+
+  function beginSwipe(x, y) {
+    swipeStartRef.current = { x, y, axis: null };
+  }
+
+  function moveSwipe(x, y) {
+    const start = swipeStartRef.current;
+    const track = trackRef.current;
+    if (!start || !track) return;
+    const deltaX = x - start.x;
+    const deltaY = y - start.y;
+    if (!start.axis) {
+      if (Math.abs(deltaX) < 8 && Math.abs(deltaY) < 8) return;
+      start.axis = Math.abs(deltaX) > Math.abs(deltaY) ? "x" : "y";
+    }
+    if (start.axis !== "x") return;
+    const atEdge = (currentPage === 0 && deltaX > 0) || (currentPage === pageCount - 1 && deltaX < 0);
+    const offset = atEdge ? deltaX / 3 : deltaX;
+    track.style.transition = "none";
+    track.style.transform = `translateX(calc(${-currentPage * 100}% + ${offset}px))`;
+  }
+
+  function endSwipe(x, y) {
+    const start = swipeStartRef.current;
+    swipeStartRef.current = null;
+    const track = trackRef.current;
+    if (!start || !track) return;
+    const deltaX = x - start.x;
+    let nextPage = currentPage;
+    if (start.axis === "x" && Math.abs(deltaX) >= 48) {
+      nextPage = deltaX < 0 ? Math.min(currentPage + 1, pageCount - 1) : Math.max(currentPage - 1, 0);
+    }
+    track.style.transition = "";
+    track.style.transform = `translateX(${-nextPage * 100}%)`;
+    if (nextPage !== currentPage) setPage(nextPage);
+  }
+
+  function cancelSwipe() {
+    const track = trackRef.current;
+    if (!swipeStartRef.current || !track) return;
+    swipeStartRef.current = null;
+    track.style.transition = "";
+    track.style.transform = `translateX(${-currentPage * 100}%)`;
+  }
+
   return (
     <div className="page-shell home-page">
       <Header />
-      <main className="home-main" aria-label={t("home.title")}>
+      <main
+        className="home-main"
+        aria-label={t("home.title")}
+        onPointerDown={(event) => {
+          if (event.pointerType !== "touch") beginSwipe(event.clientX, event.clientY);
+        }}
+        onPointerMove={(event) => {
+          if (event.pointerType !== "touch" && event.buttons === 1) moveSwipe(event.clientX, event.clientY);
+        }}
+        onPointerUp={(event) => {
+          if (event.pointerType !== "touch") endSwipe(event.clientX, event.clientY);
+        }}
+        onPointerLeave={(event) => {
+          if (event.pointerType !== "touch") cancelSwipe();
+        }}
+        onTouchStart={(event) => {
+          const touch = event.touches[0];
+          if (touch) beginSwipe(touch.clientX, touch.clientY);
+        }}
+        onTouchMove={(event) => {
+          const touch = event.touches[0];
+          if (touch) moveSwipe(touch.clientX, touch.clientY);
+        }}
+        onTouchEnd={(event) => {
+          const touch = event.changedTouches[0];
+          if (touch) endSwipe(touch.clientX, touch.clientY);
+        }}
+        onTouchCancel={cancelSwipe}
+      >
         <div className="home-meter">
-          <IntensityMeter value={intensity} />
+          <IntensityMeter value={intensity} onSelect={selectIntensity} />
           <p className="home-record-message" aria-live="polite">
-            {message || t(pressureSupported ? "record.hintPressure" : "record.hintDuration")}
+            {message || t("record.hintDuration")}
           </p>
         </div>
 
-        <div className="tile-grid">
-          {names.slice(0, 8).map((item) => (
-            <button
-              key={item.name}
-              className={`square-tile recent-tile${pressedName === item.name ? " recording" : ""}`}
-              type="button"
-              disabled={Boolean(savingName)}
-              aria-label={`${t("record.holdToRecord")} ${item.name}`}
-              {...pressureProps(item.name)}
-            >
-              <span>{item.name}</span>
-            </button>
-          ))}
+        <div ref={gridRef} className="tile-carousel">
+          <div
+            ref={trackRef}
+            className="tile-track"
+            style={{ transform: `translateX(${-currentPage * 100}%)` }}
+          >
+            {Array.from({ length: pageCount }, (_, pageIndex) => (
+              <div
+                key={pageIndex}
+                className="tile-grid"
+                style={{ gridTemplateColumns: `repeat(${grid.cols}, minmax(0, 1fr))` }}
+              >
+                {names.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize).map((item) => (
+                  <button
+                    key={item.name}
+                    className={`square-tile recent-tile${pressedName === item.name ? " recording" : ""}`}
+                    type="button"
+                    disabled={Boolean(savingName)}
+                    aria-label={`${t("record.holdToRecord")} ${item.name}`}
+                    {...pressProps(item.name)}
+                  >
+                    <span>{item.name}</span>
+                  </button>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="tile-pager">
+          {names.length > 0 && (
+            <div className="pager-dots" aria-label={t("home.pageOf", { current: currentPage + 1, total: pageCount })}>
+              {Array.from({ length: pageCount }, (_, index) => (
+                <span key={index} className={`pager-dot${index === currentPage ? " active" : ""}`} />
+              ))}
+            </div>
+          )}
         </div>
       </main>
     </div>

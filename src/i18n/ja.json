@@ -5,34 +5,39 @@
   "header": {
     "backHome": "ホームへ戻る",
     "history": "履歴",
-    "account": "アカウント"
+    "account": "アカウント",
+    "mute": "ミュート",
+    "unmute": "ミュート解除"
   },
   "auth": {
     "tagline": "時間に、結び目をひとつ。",
     "username": "ユーザー名",
-    "login": "入る",
-    "usernameHint": "ユーザー名を入力するだけ",
-    "usernameRequired": "ユーザー名を入力してください",
-    "userNotFound": "ユーザーが見つかりません。先にユーザーを作成してください",
-    "createUser": "ユーザー作成"
+    "login": "はじめる",
+    "usernameHint": "パスワード不要。ユーザー名だけでOK。",
+    "usernameRequired": "ユーザー名を入力してください"
   },
   "createUser": {
     "title": "ユーザー作成",
     "username": "ユーザー名",
-    "age": "年齢",
-    "email": "メールアドレス",
+    "birthdate": "生年月日",
+    "year": "年",
+    "month": "月",
+    "day": "日",
+    "birthdateInvalid": "正しい生年月日を入力してください",
     "submit": "作成"
   },
   "account": {
     "title": "アカウント",
     "username": "ユーザー名",
+    "birthdate": "生年月日",
     "age": "年齢",
-    "email": "メールアドレス"
+    "ageValue": "{{years}}歳{{months}}か月",
+    "logout": "ログアウト"
   },
   "home": {
     "title": "ホーム",
-    "namePlaceholder": "記録名",
-    "start": "開始"
+    "start": "開始",
+    "pageOf": "{{total}}ページ中{{current}}ページ目"
   },
   "record": {
     "namePlaceholder": "記録名",
@@ -41,7 +46,6 @@
     "holdToRecord": "長押しで記録",
     "keepHolding": "そのまま押し続ける",
     "saving": "保存中",
-    "hintPressure": "タップで 1。強く押すほど強度が上がります",
     "hintDuration": "タップで 1。長く押すほど強度が上がります",
     "padAria": "長押しで強度を記録"
   },
@@ -69,6 +73,7 @@
   "meter": {
     "intensity": "強度",
     "aria": "強度 {{value}}",
-    "ariaOutOfTen": "強度 {{value}} / 10"
+    "ariaOutOfTen": "強度 {{value}} / 10",
+    "selectLevel": "強度を{{level}}に設定"
   }
 }

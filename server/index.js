@@ -31,7 +31,6 @@ const isProduction = process.env.NODE_ENV === "production";
 
 const USERNAME_RE =
   /^[a-z0-9_\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}\p{Script_Extensions=Hangul}-]{1,32}$/u;
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const sessions = new Map();
 const sessionAgeMs = 30 * 24 * 60 * 60 * 1000;
 const sessionCookie = "tikt_session";
@@ -124,22 +123,25 @@ app.post("/api/logout", (req, res) => {
 
 app.post("/api/users", (req, res) => {
   const username = normalizeUsername(req.body?.username);
-  const age = Number(req.body?.age);
-  const email = String(req.body?.email ?? "").trim().toLowerCase();
+  const birthdate = String(req.body?.birthdate ?? "").trim();
 
   if (!USERNAME_RE.test(username)) {
     return res.status(400).json({ error: "用户名为 1–32 个字符，可使用中日韩文字、字母、数字、- 和 _" });
   }
-  if (!Number.isInteger(age) || age < 1 || age > 130) {
-    return res.status(400).json({ error: "请输入 1–130 之间的年龄" });
-  }
-  if (email.length > 254 || !EMAIL_RE.test(email)) {
-    return res.status(400).json({ error: "请输入有效的邮箱地址" });
+  const birthTime = Date.parse(birthdate);
+  const isValidBirthdate =
+    /^\d{4}-\d{2}-\d{2}$/.test(birthdate) &&
+    !Number.isNaN(birthTime) &&
+    new Date(birthTime).toISOString().slice(0, 10) === birthdate &&
+    birthTime <= Date.now() &&
+    birthdate >= "1900-01-01";
+  if (!isValidBirthdate) {
+    return res.status(400).json({ error: "请输入有效的出生日期" });
   }
   if (getUser(username)) return res.status(409).json({ error: "用户名已存在", code: "USER_EXISTS" });
 
   try {
-    const user = createUser({ username, age, email });
+    const user = createUser({ username, birthdate });
     startSession(user, req, res);
     res.status(201).json({ user });
   } catch (error) {
@@ -168,26 +170,26 @@ app.post("/api/knot-names", requireSession, (req, res) => {
   const name = String(req.body?.name ?? "").trim().normalize("NFKC");
   if (!name || name.length > 48) return res.status(400).json({ error: "记录名称需要 1–48 个字符" });
   const created = createKnotName(req.user.id, name);
-  if (!created) return res.status(409).json({ error: "同名的结已存在", code: "NAME_EXISTS" });
+  if (!created) return res.status(409).json({ error: "同名的结点已存在", code: "NAME_EXISTS" });
   res.status(201).json({ name: created });
 });
 
 app.patch("/api/knot-names/:nameId", requireSession, (req, res) => {
   const nameId = Number(req.params.nameId);
-  if (!Number.isInteger(nameId) || nameId < 1) return res.status(400).json({ error: "结 ID 无效" });
+  if (!Number.isInteger(nameId) || nameId < 1) return res.status(400).json({ error: "结点 ID 无效" });
   const name = String(req.body?.name ?? "").trim().normalize("NFKC");
   if (!name || name.length > 48) return res.status(400).json({ error: "记录名称需要 1–48 个字符" });
   const result = renameKnotName(req.user.id, nameId, name);
-  if (result.error === "NOT_FOUND") return res.status(404).json({ error: "结不存在", code: "NAME_NOT_FOUND" });
-  if (result.error === "CONFLICT") return res.status(409).json({ error: "同名的结已存在", code: "NAME_EXISTS" });
+  if (result.error === "NOT_FOUND") return res.status(404).json({ error: "结点不存在", code: "NAME_NOT_FOUND" });
+  if (result.error === "CONFLICT") return res.status(409).json({ error: "同名的结点已存在", code: "NAME_EXISTS" });
   res.json({ name: result.name });
 });
 
 app.delete("/api/knot-names/:nameId", requireSession, (req, res) => {
   const nameId = Number(req.params.nameId);
-  if (!Number.isInteger(nameId) || nameId < 1) return res.status(400).json({ error: "结 ID 无效" });
+  if (!Number.isInteger(nameId) || nameId < 1) return res.status(400).json({ error: "结点 ID 无效" });
   if (!deleteKnotName(req.user.id, nameId)) {
-    return res.status(404).json({ error: "结不存在", code: "NAME_NOT_FOUND" });
+    return res.status(404).json({ error: "结点不存在", code: "NAME_NOT_FOUND" });
   }
   res.status(204).end();
 });

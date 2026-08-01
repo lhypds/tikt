@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-export default function IntensityMeter({ value, compact = false }) {
+export default function IntensityMeter({ value, compact = false, onSelect }) {
   const { t } = useTranslation();
 
   if (compact) {
@@ -19,10 +19,20 @@ export default function IntensityMeter({ value, compact = false }) {
         <span>{t("meter.intensity")}</span>
         <span>{value}/10</span>
       </div>
-      <div className="meter" aria-hidden="true">
-        {Array.from({ length: 10 }, (_, index) => (
-          <span key={index} className={index < value ? "active" : ""} />
-        ))}
+      <div className="meter" aria-hidden={onSelect ? undefined : "true"}>
+        {Array.from({ length: 10 }, (_, index) =>
+          onSelect ? (
+            <button
+              key={index}
+              type="button"
+              className={index < value ? "active" : ""}
+              aria-label={t("meter.selectLevel", { level: index + 1 })}
+              onClick={() => onSelect(index + 1)}
+            />
+          ) : (
+            <span key={index} className={index < value ? "active" : ""} />
+          ),
+        )}
       </div>
     </div>
   );

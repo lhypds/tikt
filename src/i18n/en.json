@@ -5,34 +5,39 @@
   "header": {
     "backHome": "Back to home",
     "history": "History",
-    "account": "Account"
+    "account": "Account",
+    "mute": "Mute",
+    "unmute": "Unmute"
   },
   "auth": {
     "tagline": "Tie a knot in time.",
     "username": "Username",
-    "login": "Enter",
-    "usernameHint": "Just enter a username",
-    "usernameRequired": "Please enter a username",
-    "userNotFound": "User not found — create one first",
-    "createUser": "Create user"
+    "login": "Go",
+    "usernameHint": "No password — just a username.",
+    "usernameRequired": "Please enter a username"
   },
   "createUser": {
     "title": "Create user",
     "username": "Username",
-    "age": "Age",
-    "email": "Email",
+    "birthdate": "Date of birth",
+    "year": "Year",
+    "month": "Month",
+    "day": "Day",
+    "birthdateInvalid": "Enter a valid date of birth",
     "submit": "Create"
   },
   "account": {
     "title": "Account",
     "username": "Username",
+    "birthdate": "Date of birth",
     "age": "Age",
-    "email": "Email"
+    "ageValue": "{{years}} years {{months}} months",
+    "logout": "Logout"
   },
   "home": {
     "title": "Home",
-    "namePlaceholder": "Record name",
-    "start": "Start"
+    "start": "Start",
+    "pageOf": "Page {{current}} of {{total}}"
   },
   "record": {
     "namePlaceholder": "Record name",
@@ -41,7 +46,6 @@
     "holdToRecord": "Hold to record",
     "keepHolding": "Keep holding",
     "saving": "Saving",
-    "hintPressure": "A tap counts as 1 — press harder for higher intensity",
     "hintDuration": "A tap counts as 1 — press longer for higher intensity",
     "padAria": "Hold to record intensity"
   },
@@ -69,6 +73,7 @@
   "meter": {
     "intensity": "Intensity",
     "aria": "Intensity {{value}}",
-    "ariaOutOfTen": "Intensity {{value}} / 10"
+    "ariaOutOfTen": "Intensity {{value}} / 10",
+    "selectLevel": "Set intensity to {{level}}"
   }
 }

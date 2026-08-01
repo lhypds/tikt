@@ -5,34 +5,39 @@
   "header": {
     "backHome": "返回首页",
     "history": "历史",
-    "account": "账户"
+    "account": "账户",
+    "mute": "静音",
+    "unmute": "取消静音"
   },
   "auth": {
-    "tagline": "在时间里，打一个结。",
+    "tagline": "在时间里，打一个结点。",
     "username": "用户名",
     "login": "进入",
-    "usernameHint": "只需输入用户名",
-    "usernameRequired": "请输入用户名",
-    "userNotFound": "用户不存在，请先创建用户",
-    "createUser": "创建用户"
+    "usernameHint": "无需密码，输入用户名即可。",
+    "usernameRequired": "请输入用户名"
   },
   "createUser": {
     "title": "创建用户",
     "username": "用户名",
-    "age": "年龄",
-    "email": "邮箱",
+    "birthdate": "出生日期",
+    "year": "年",
+    "month": "月",
+    "day": "日",
+    "birthdateInvalid": "请输入有效的出生日期",
     "submit": "创建"
   },
   "account": {
     "title": "账户",
     "username": "用户名",
+    "birthdate": "出生日期",
     "age": "年龄",
-    "email": "邮箱"
+    "ageValue": "{{years}} 岁 {{months}} 个月",
+    "logout": "退出登录"
   },
   "home": {
     "title": "主页",
-    "namePlaceholder": "记录名称",
-    "start": "开始"
+    "start": "开始",
+    "pageOf": "第 {{current}} 页，共 {{total}} 页"
   },
   "record": {
     "namePlaceholder": "记录名称",
@@ -41,7 +46,6 @@
     "holdToRecord": "按住记录",
     "keepHolding": "保持按压",
     "saving": "保存中",
-    "hintPressure": "轻触为 1，按得越用力，强度越高",
     "hintDuration": "轻触为 1，按得越久，强度越高",
     "padAria": "按住记录强度"
   },
@@ -52,23 +56,24 @@
     "deleting": "删除中"
   },
   "knots": {
-    "title": "结",
-    "createTitle": "新建结",
-    "editTitle": "编辑结",
+    "title": "结点",
+    "createTitle": "新建结点",
+    "editTitle": "编辑结点",
     "create": "创建",
     "save": "保存",
     "namePlaceholder": "记录名称",
     "nameRequired": "请输入记录名称",
-    "empty": "还没有结",
+    "empty": "还没有结点",
     "delete": "删除",
     "deleting": "删除中",
-    "deleteTitle": "删除结",
+    "deleteTitle": "删除结点",
     "deleteConfirm": "删除「{{name}}」及其全部记录？此操作无法撤销。",
     "cancel": "取消"
   },
   "meter": {
     "intensity": "强度",
     "aria": "强度 {{value}}",
-    "ariaOutOfTen": "强度 {{value}} / 10"
+    "ariaOutOfTen": "强度 {{value}} / 10",
+    "selectLevel": "将强度设为 {{level}}"
   }
 }

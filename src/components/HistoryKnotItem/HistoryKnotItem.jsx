@@ -68,6 +68,7 @@ export default function HistoryKnotItem({ knot, formattedTime, onDelete }) {
         className="history-delete"
         type="button"
         disabled={deleting}
+        style={{ opacity: offset === 0 ? 0 : 1 }}
         onFocus={() => moveTo(-REVEAL_WIDTH)}
         onClick={handleDelete}
         aria-label={`${t("history.delete")} ${knot.name}`}
@@ -76,7 +77,7 @@ export default function HistoryKnotItem({ knot, formattedTime, onDelete }) {
       </button>
       <div
         className="history-knot-row"
-        style={{ transform: `translateX(${offset}px)` }}
+        style={offset ? { transform: `translateX(${offset}px)` } : undefined}
         onPointerDown={startSwipe}
         onPointerMove={moveSwipe}
         onPointerUp={finishSwipe}

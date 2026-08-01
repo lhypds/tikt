@@ -70,6 +70,7 @@ export default function KnotItem({ knot, formattedTime, deleting = false, onDele
         className="history-delete"
         type="button"
         disabled={deleting}
+        style={{ opacity: offset === 0 ? 0 : 1 }}
         onFocus={() => moveTo(-REVEAL_WIDTH)}
         onClick={() => onDelete(knot)}
         aria-label={`${t("knots.delete")} ${knot.name}`}
@@ -78,7 +79,7 @@ export default function KnotItem({ knot, formattedTime, deleting = false, onDele
       </button>
       <div
         className="history-knot-row knot-name-row"
-        style={{ transform: `translateX(${offset}px)` }}
+        style={offset ? { transform: `translateX(${offset}px)` } : undefined}
         onPointerDown={startSwipe}
         onPointerMove={moveSwipe}
         onPointerUp={finishSwipe}
@@ -87,7 +88,11 @@ export default function KnotItem({ knot, formattedTime, deleting = false, onDele
       >
         <div className="knot-copy">
           <strong>{knot.name}</strong>
-          {knot.lastUsed && <time dateTime={knot.lastUsed}>{formattedTime}</time>}
+          {knot.lastUsed ? (
+            <time dateTime={knot.lastUsed}>{formattedTime}</time>
+          ) : (
+            <span className="knot-time-empty" aria-hidden="true">&nbsp;</span>
+          )}
         </div>
         <small className="knot-count">{knot.count}</small>
       </div>

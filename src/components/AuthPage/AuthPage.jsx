@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, Navigate, useNavigate } from "../../ui/index.js";
+import { Navigate, useNavigate } from "../../ui/index.js";
 import { useAuth } from "../AuthProvider/index.js";
 import LanguageSwitcher from "../LanguageSwitcher/index.js";
 
@@ -25,7 +25,11 @@ export default function AuthPage() {
       await login(name);
       navigate("/", { replace: true });
     } catch (requestError) {
-      setError(requestError.code === "USER_NOT_FOUND" ? t("auth.userNotFound") : requestError.message);
+      if (requestError.code === "USER_NOT_FOUND") {
+        navigate(`/create-user?username=${encodeURIComponent(name)}`);
+        return;
+      }
+      setError(requestError.message);
     } finally {
       setSubmitting(false);
     }
@@ -65,9 +69,6 @@ export default function AuthPage() {
           </div>
           <p className={error ? "form-message error" : "form-message"}>{error || t("auth.usernameHint")}</p>
         </form>
-        <Link className="text-link" to="/create-user">
-          {t("auth.createUser")}
-        </Link>
       </section>
     </main>
   );
