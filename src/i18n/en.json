@@ -4,7 +4,7 @@
   },
   "header": {
     "backHome": "Back to home",
-    "history": "History",
+    "history": "Knots",
     "account": "Account",
     "mute": "Mute",
     "unmute": "Unmute"
@@ -50,23 +50,23 @@
     "padAria": "Hold to record intensity"
   },
   "history": {
-    "title": "History",
+    "title": "Knots",
     "empty": "No records yet",
     "delete": "Delete",
     "deleting": "Deleting"
   },
   "knots": {
-    "title": "Knots",
-    "createTitle": "Create knot",
-    "editTitle": "Edit knot",
+    "title": "Ropes",
+    "createTitle": "Create rope",
+    "editTitle": "Edit rope",
     "create": "Create",
     "save": "Save",
-    "namePlaceholder": "Knot name",
-    "nameRequired": "Please enter a knot name",
-    "empty": "No knots yet",
+    "namePlaceholder": "Rope name",
+    "nameRequired": "Please enter a rope name",
+    "empty": "No ropes yet",
     "delete": "Delete",
     "deleting": "Deleting",
-    "deleteTitle": "Delete knot",
+    "deleteTitle": "Delete rope",
     "deleteConfirm": "Delete “{{name}}” and all its records? This cannot be undone.",
     "cancel": "Cancel"
   },

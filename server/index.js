@@ -170,26 +170,26 @@ app.post("/api/knot-names", requireSession, (req, res) => {
   const name = String(req.body?.name ?? "").trim().normalize("NFKC");
   if (!name || name.length > 48) return res.status(400).json({ error: "记录名称需要 1–48 个字符" });
   const created = createKnotName(req.user.id, name);
-  if (!created) return res.status(409).json({ error: "同名的结点已存在", code: "NAME_EXISTS" });
+  if (!created) return res.status(409).json({ error: "同名的绳已存在", code: "NAME_EXISTS" });
   res.status(201).json({ name: created });
 });
 
 app.patch("/api/knot-names/:nameId", requireSession, (req, res) => {
   const nameId = Number(req.params.nameId);
-  if (!Number.isInteger(nameId) || nameId < 1) return res.status(400).json({ error: "结点 ID 无效" });
+  if (!Number.isInteger(nameId) || nameId < 1) return res.status(400).json({ error: "绳 ID 无效" });
   const name = String(req.body?.name ?? "").trim().normalize("NFKC");
   if (!name || name.length > 48) return res.status(400).json({ error: "记录名称需要 1–48 个字符" });
   const result = renameKnotName(req.user.id, nameId, name);
-  if (result.error === "NOT_FOUND") return res.status(404).json({ error: "结点不存在", code: "NAME_NOT_FOUND" });
-  if (result.error === "CONFLICT") return res.status(409).json({ error: "同名的结点已存在", code: "NAME_EXISTS" });
+  if (result.error === "NOT_FOUND") return res.status(404).json({ error: "绳不存在", code: "NAME_NOT_FOUND" });
+  if (result.error === "CONFLICT") return res.status(409).json({ error: "同名的绳已存在", code: "NAME_EXISTS" });
   res.json({ name: result.name });
 });
 
 app.delete("/api/knot-names/:nameId", requireSession, (req, res) => {
   const nameId = Number(req.params.nameId);
-  if (!Number.isInteger(nameId) || nameId < 1) return res.status(400).json({ error: "结点 ID 无效" });
+  if (!Number.isInteger(nameId) || nameId < 1) return res.status(400).json({ error: "绳 ID 无效" });
   if (!deleteKnotName(req.user.id, nameId)) {
-    return res.status(404).json({ error: "结点不存在", code: "NAME_NOT_FOUND" });
+    return res.status(404).json({ error: "绳不存在", code: "NAME_NOT_FOUND" });
   }
   res.status(204).end();
 });

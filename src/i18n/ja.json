@@ -4,7 +4,7 @@
   },
   "header": {
     "backHome": "ホームへ戻る",
-    "history": "履歴",
+    "history": "結",
     "account": "アカウント",
     "mute": "ミュート",
     "unmute": "ミュート解除"
@@ -50,23 +50,23 @@
     "padAria": "長押しで強度を記録"
   },
   "history": {
-    "title": "履歴",
+    "title": "結",
     "empty": "まだ記録がありません",
     "delete": "削除",
     "deleting": "削除中"
   },
   "knots": {
-    "title": "結び目",
-    "createTitle": "結び目を作成",
-    "editTitle": "結び目を編集",
+    "title": "縄",
+    "createTitle": "縄を作成",
+    "editTitle": "縄を編集",
     "create": "作成",
     "save": "保存",
     "namePlaceholder": "記録名",
     "nameRequired": "記録名を入力してください",
-    "empty": "まだ結び目がありません",
+    "empty": "まだ縄がありません",
     "delete": "削除",
     "deleting": "削除中",
-    "deleteTitle": "結び目を削除",
+    "deleteTitle": "縄を削除",
     "deleteConfirm": "「{{name}}」とそのすべての記録を削除しますか？この操作は取り消せません。",
     "cancel": "キャンセル"
   },
