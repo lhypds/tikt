@@ -1,0 +1,74 @@
+{
+  "common": {
+    "loading": "読み込み中"
+  },
+  "header": {
+    "backHome": "ホームへ戻る",
+    "history": "履歴",
+    "account": "アカウント"
+  },
+  "auth": {
+    "tagline": "時間に、結び目をひとつ。",
+    "username": "ユーザー名",
+    "login": "入る",
+    "usernameHint": "ユーザー名を入力するだけ",
+    "usernameRequired": "ユーザー名を入力してください",
+    "userNotFound": "ユーザーが見つかりません。先にユーザーを作成してください",
+    "createUser": "ユーザー作成"
+  },
+  "createUser": {
+    "title": "ユーザー作成",
+    "username": "ユーザー名",
+    "age": "年齢",
+    "email": "メールアドレス",
+    "submit": "作成"
+  },
+  "account": {
+    "title": "アカウント",
+    "username": "ユーザー名",
+    "age": "年齢",
+    "email": "メールアドレス"
+  },
+  "home": {
+    "title": "ホーム",
+    "namePlaceholder": "記録名",
+    "start": "開始"
+  },
+  "record": {
+    "namePlaceholder": "記録名",
+    "nameRequired": "先に記録名を入力してください",
+    "saved": "記録しました",
+    "holdToRecord": "長押しで記録",
+    "keepHolding": "そのまま押し続ける",
+    "saving": "保存中",
+    "hintPressure": "タップで 1。強く押すほど強度が上がります",
+    "hintDuration": "タップで 1。長く押すほど強度が上がります",
+    "padAria": "長押しで強度を記録"
+  },
+  "history": {
+    "title": "履歴",
+    "empty": "まだ記録がありません",
+    "delete": "削除",
+    "deleting": "削除中"
+  },
+  "knots": {
+    "title": "結び目",
+    "createTitle": "結び目を作成",
+    "editTitle": "結び目を編集",
+    "create": "作成",
+    "save": "保存",
+    "namePlaceholder": "記録名",
+    "nameRequired": "記録名を入力してください",
+    "empty": "まだ結び目がありません",
+    "delete": "削除",
+    "deleting": "削除中",
+    "deleteTitle": "結び目を削除",
+    "deleteConfirm": "「{{name}}」とそのすべての記録を削除しますか？この操作は取り消せません。",
+    "cancel": "キャンセル"
+  },
+  "meter": {
+    "intensity": "強度",
+    "aria": "強度 {{value}}",
+    "ariaOutOfTen": "強度 {{value}} / 10"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "common": {
+    "loading": "正在加载"
+  },
+  "header": {
+    "backHome": "返回首页",
+    "history": "历史",
+    "account": "账户"
+  },
+  "auth": {
+    "tagline": "在时间里，打一个结。",
+    "username": "用户名",
+    "login": "进入",
+    "usernameHint": "只需输入用户名",
+    "usernameRequired": "请输入用户名",
+    "userNotFound": "用户不存在，请先创建用户",
+    "createUser": "创建用户"
+  },
+  "createUser": {
+    "title": "创建用户",
+    "username": "用户名",
+    "age": "年龄",
+    "email": "邮箱",
+    "submit": "创建"
+  },
+  "account": {
+    "title": "账户",
+    "username": "用户名",
+    "age": "年龄",
+    "email": "邮箱"
+  },
+  "home": {
+    "title": "主页",
+    "namePlaceholder": "记录名称",
+    "start": "开始"
+  },
+  "record": {
+    "namePlaceholder": "记录名称",
+    "nameRequired": "请先输入记录名称",
+    "saved": "已记录",
+    "holdToRecord": "按住记录",
+    "keepHolding": "保持按压",
+    "saving": "保存中",
+    "hintPressure": "轻触为 1，按得越用力，强度越高",
+    "hintDuration": "轻触为 1，按得越久，强度越高",
+    "padAria": "按住记录强度"
+  },
+  "history": {
+    "title": "历史",
+    "empty": "还没有记录",
+    "delete": "删除",
+    "deleting": "删除中"
+  },
+  "knots": {
+    "title": "结",
+    "createTitle": "新建结",
+    "editTitle": "编辑结",
+    "create": "创建",
+    "save": "保存",
+    "namePlaceholder": "记录名称",
+    "nameRequired": "请输入记录名称",
+    "empty": "还没有结",
+    "delete": "删除",
+    "deleting": "删除中",
+    "deleteTitle": "删除结",
+    "deleteConfirm": "删除「{{name}}」及其全部记录？此操作无法撤销。",
+    "cancel": "取消"
+  },
+  "meter": {
+    "intensity": "强度",
+    "aria": "强度 {{value}}",
+    "ariaOutOfTen": "强度 {{value}} / 10"
+  }
+}

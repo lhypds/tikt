@@ -1,0 +1,74 @@
+{
+  "common": {
+    "loading": "Loading"
+  },
+  "header": {
+    "backHome": "Back to home",
+    "history": "History",
+    "account": "Account"
+  },
+  "auth": {
+    "tagline": "Tie a knot in time.",
+    "username": "Username",
+    "login": "Enter",
+    "usernameHint": "Just enter a username",
+    "usernameRequired": "Please enter a username",
+    "userNotFound": "User not found — create one first",
+    "createUser": "Create user"
+  },
+  "createUser": {
+    "title": "Create user",
+    "username": "Username",
+    "age": "Age",
+    "email": "Email",
+    "submit": "Create"
+  },
+  "account": {
+    "title": "Account",
+    "username": "Username",
+    "age": "Age",
+    "email": "Email"
+  },
+  "home": {
+    "title": "Home",
+    "namePlaceholder": "Record name",
+    "start": "Start"
+  },
+  "record": {
+    "namePlaceholder": "Record name",
+    "nameRequired": "Enter a record name first",
+    "saved": "Recorded",
+    "holdToRecord": "Hold to record",
+    "keepHolding": "Keep holding",
+    "saving": "Saving",
+    "hintPressure": "A tap counts as 1 — press harder for higher intensity",
+    "hintDuration": "A tap counts as 1 — press longer for higher intensity",
+    "padAria": "Hold to record intensity"
+  },
+  "history": {
+    "title": "History",
+    "empty": "No records yet",
+    "delete": "Delete",
+    "deleting": "Deleting"
+  },
+  "knots": {
+    "title": "Knots",
+    "createTitle": "Create knot",
+    "editTitle": "Edit knot",
+    "create": "Create",
+    "save": "Save",
+    "namePlaceholder": "Knot name",
+    "nameRequired": "Please enter a knot name",
+    "empty": "No knots yet",
+    "delete": "Delete",
+    "deleting": "Deleting",
+    "deleteTitle": "Delete knot",
+    "deleteConfirm": "Delete “{{name}}” and all its records? This cannot be undone.",
+    "cancel": "Cancel"
+  },
+  "meter": {
+    "intensity": "Intensity",
+    "aria": "Intensity {{value}}",
+    "ariaOutOfTen": "Intensity {{value}} / 10"
+  }
+}
