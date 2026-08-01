@@ -43,6 +43,17 @@ input {
   font: inherit;
 }
 
+button:focus,
+button:focus-visible,
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible {
+  outline: none;
+}
+
 button {
   cursor: pointer;
 }
