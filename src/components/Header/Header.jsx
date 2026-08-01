@@ -7,7 +7,7 @@ import { useAuth } from "../AuthProvider/index.js";
 import KnotModal from "../KnotModal/index.js";
 import LanguageSwitcher from "../LanguageSwitcher/index.js";
 
-export default function Header({ back = false }) {
+export default function Header({ back = false, backTo = "/" }) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -24,7 +24,10 @@ export default function Header({ back = false }) {
     <header className="topbar">
       <span className="topbar-brand">
         {back ? (
-          <ActionButton tooltip={t("header.backHome")} onClick={() => navigate("/")}>
+          <ActionButton
+            tooltip={t(backTo === "/" ? "header.backHome" : "header.back")}
+            onClick={() => navigate(backTo)}
+          >
             <svg viewBox="0 0 24 24">
               <path d="m15 18-6-6 6-6" />
             </svg>

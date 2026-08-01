@@ -5,6 +5,7 @@ import {
   HistoryPage,
   HomePage,
   KnotsPage,
+  KnotStatsPage,
   Loading,
   PrivateRoute,
   RecordPage,
@@ -22,6 +23,14 @@ export default function App() {
   if (pathname === "/") return <PrivateRoute><HomePage /></PrivateRoute>;
   if (pathname === "/record") return <PrivateRoute><RecordPage /></PrivateRoute>;
   if (pathname === "/knots") return <PrivateRoute><KnotsPage /></PrivateRoute>;
+  const knotStatsMatch = pathname.match(/^\/knots\/(\d+)$/);
+  if (knotStatsMatch) {
+    return (
+      <PrivateRoute>
+        <KnotStatsPage nameId={Number(knotStatsMatch[1])} />
+      </PrivateRoute>
+    );
+  }
   if (pathname === "/history") return <PrivateRoute><HistoryPage /></PrivateRoute>;
   if (pathname === "/account") return <PrivateRoute><AccountPage /></PrivateRoute>;
   return <Navigate to="/" replace />;

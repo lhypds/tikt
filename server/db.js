@@ -117,6 +117,13 @@ const selectNames = db.prepare(`
   LIMIT ?
 `);
 
+const selectKnotsByName = db.prepare(`
+  SELECT id, time, intensity, name
+  FROM knots
+  WHERE user_id = ? AND name = ?
+  ORDER BY time DESC, id DESC
+`);
+
 const deleteKnotById = db.prepare(`
   DELETE FROM knots
   WHERE id = ? AND user_id = ?
@@ -194,6 +201,13 @@ export function getKnotNames(userId, limit = 8) {
 
 export function deleteKnot(userId, knotId) {
   return deleteKnotById.run(knotId, userId).changes > 0;
+}
+
+export function getKnotNameStats(userId, nameId) {
+  const name = selectKnotNameById.get(nameId, userId);
+  if (!name) return null;
+  const knots = selectKnotsByName.all(userId, name.name);
+  return { name, knots };
 }
 
 export function createKnotName(userId, name) {

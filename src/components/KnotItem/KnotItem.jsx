@@ -6,7 +6,7 @@ const DELETE_GUTTER = 12;
 const REVEAL_WIDTH = DELETE_WIDTH + DELETE_GUTTER;
 const LONG_PRESS_MS = 500;
 
-export default function KnotItem({ knot, formattedTime, deleting = false, onDelete, onEdit }) {
+export default function KnotItem({ knot, formattedTime, deleting = false, onDelete, onEdit, onOpen }) {
   const { t } = useTranslation();
   const [offset, setOffset] = useState(0);
   const offsetRef = useRef(0);
@@ -61,7 +61,15 @@ export default function KnotItem({ knot, formattedTime, deleting = false, onDele
     const drag = dragRef.current;
     if (!drag?.active) return;
     drag.active = false;
-    moveTo(offsetRef.current <= -REVEAL_WIDTH / 2 ? -REVEAL_WIDTH : 0);
+    if (drag.dragging) {
+      moveTo(offsetRef.current <= -REVEAL_WIDTH / 2 ? -REVEAL_WIDTH : 0);
+      return;
+    }
+    if (drag.startOffset !== 0) {
+      moveTo(0);
+      return;
+    }
+    onOpen?.(knot);
   }
 
   return (
@@ -79,11 +87,18 @@ export default function KnotItem({ knot, formattedTime, deleting = false, onDele
       </button>
       <div
         className="history-knot-row knot-name-row"
+        role="button"
+        tabIndex={0}
         style={offset ? { transform: `translateX(${offset}px)` } : undefined}
         onPointerDown={startSwipe}
         onPointerMove={moveSwipe}
         onPointerUp={finishSwipe}
         onPointerCancel={finishSwipe}
+        onKeyDown={(event) => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          event.preventDefault();
+          onOpen?.(knot);
+        }}
         onContextMenu={(event) => event.preventDefault()}
       >
         <div className="knot-copy">

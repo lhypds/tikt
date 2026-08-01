@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import * as api from "../../api.js";
-import { Modal } from "../../ui/index.js";
+import { Modal, useNavigate } from "../../ui/index.js";
 import Header from "../Header/index.js";
 import KnotItem from "../KnotItem/index.js";
 import KnotModal from "../KnotModal/index.js";
@@ -10,6 +10,7 @@ const DATE_LOCALES = { zh: "zh-CN", ja: "ja-JP", en: "en-US" };
 
 export default function KnotsPage() {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const [names, setNames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -93,6 +94,7 @@ export default function KnotsPage() {
                   deleting={deletingId === item.id}
                   onDelete={requestDelete}
                   onEdit={setEditing}
+                  onOpen={() => navigate(`/knots/${item.id}`)}
                 />
               );
             })}

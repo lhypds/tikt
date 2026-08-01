@@ -8,6 +8,7 @@ export { default as HomePage } from "./HomePage/index.js";
 export { default as KnotItem } from "./KnotItem/index.js";
 export { default as KnotModal } from "./KnotModal/index.js";
 export { default as KnotsPage } from "./KnotsPage/index.js";
+export { default as KnotStatsPage } from "./KnotStatsPage/index.js";
 export { default as LanguageSwitcher } from "./LanguageSwitcher/index.js";
 export { default as Loading } from "./Loading/index.js";
 export { default as PrivateRoute } from "./PrivateRoute/index.js";

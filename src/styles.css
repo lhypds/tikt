@@ -669,6 +669,298 @@ a {
   text-align: right;
 }
 
+.stats-page .section-heading span,
+.stats-page .empty-state {
+  color: var(--ink);
+}
+
+.stats-block {
+  margin-top: 26px;
+}
+
+.stats-block + .stats-block {
+  border-top: 1px solid var(--ink);
+  padding-top: 26px;
+}
+
+.stats-list {
+  margin-top: 40px;
+}
+
+.stats-list .knot-list {
+  border-top: 1px solid var(--ink);
+}
+
+.stats-filter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.stats-filter button {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+}
+
+.stats-filter svg {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.cal-title {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.cal-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.cal-nav button {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+}
+
+.cal-nav svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cal-weekdays,
+.cal-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.cal-weekdays {
+  margin-bottom: 4px;
+}
+
+.cal-weekdays span {
+  padding: 4px 0;
+  color: var(--ink);
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 10px;
+}
+
+.cal-cell {
+  position: relative;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+}
+
+.cal-cell.empty {
+  border-color: transparent;
+}
+
+.cal-cell:not(.empty):hover {
+  background: var(--ink);
+}
+
+.cal-cell:not(.empty):hover .cal-daynum,
+.cal-cell:not(.empty):hover .cal-count {
+  color: var(--paper);
+}
+
+.cal-cell.selectable {
+  cursor: pointer;
+}
+
+.cal-cell.selected {
+  background: var(--ink);
+}
+
+.cal-cell.selected .cal-daynum,
+.cal-cell.selected .cal-count {
+  color: var(--paper);
+}
+
+.cal-daynum {
+  position: absolute;
+  top: 3px;
+  left: 5px;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 9px;
+}
+
+.cal-count {
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 9px;
+}
+
+.chart-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.chart-range {
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.seg-toggle {
+  display: inline-flex;
+}
+
+.seg-toggle button {
+  height: 30px;
+  padding: 0 14px;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.seg-toggle button + button {
+  border-left: 0;
+}
+
+.seg-toggle button.active {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.chart-plot {
+  position: relative;
+  height: 180px;
+  border-bottom: 1px solid var(--ink);
+}
+
+.chart-gridline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px solid var(--line);
+}
+
+.chart-gridline span {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  z-index: 1;
+  padding-right: 3px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 9px;
+}
+
+.chart-bars {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+
+.chart-band {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.chart-band.active,
+.chart-band.selected {
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+
+.chart-band:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: -1px;
+}
+
+.chart-bar {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(100% - 2px, 24px);
+  background: var(--ink);
+}
+
+.chart-tooltip {
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 5px 9px;
+  background: var(--ink);
+  color: var(--paper);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.chart-tooltip span {
+  font-family: var(--mono);
+  font-size: 10px;
+}
+
+.chart-x {
+  display: flex;
+  margin-top: 6px;
+}
+
+.chart-x span {
+  flex: 1;
+  min-width: 0;
+  color: var(--ink);
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 9px;
+  white-space: nowrap;
+}
+
 .modal-text {
   margin: 0;
   font-size: 14px;
@@ -687,7 +979,9 @@ a {
 
 @media (hover: hover) {
   .square-tile:hover,
-  .outline-button:hover {
+  .outline-button:hover,
+  .cal-nav button:hover:not(:disabled),
+  .seg-toggle button:not(.active):hover {
     background: var(--ink);
     color: var(--paper);
   }

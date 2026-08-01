@@ -30,6 +30,7 @@ export const createKnotName = (name) =>
 export const renameKnotName = (nameId, name) =>
   request(`/api/knot-names/${nameId}`, { method: "PATCH", body: JSON.stringify({ name }) });
 export const deleteKnotName = (nameId) => request(`/api/knot-names/${nameId}`, { method: "DELETE" });
+export const getKnotNameStats = (nameId) => request(`/api/knot-names/${nameId}/stats`);
 export const createKnot = (knot) =>
   request("/api/knots", { method: "POST", body: JSON.stringify(knot) });
 export const deleteKnot = (knotId) => request(`/api/knots/${knotId}`, { method: "DELETE" });

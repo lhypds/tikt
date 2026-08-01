@@ -4,6 +4,7 @@
   },
   "header": {
     "backHome": "返回首页",
+    "back": "返回",
     "history": "结",
     "account": "账户",
     "mute": "静音",
@@ -69,6 +70,18 @@
     "deleteTitle": "删除绳",
     "deleteConfirm": "删除「{{name}}」及其全部记录？此操作无法撤销。",
     "cancel": "取消"
+  },
+  "knotStats": {
+    "byDay": "天",
+    "byMonth": "月",
+    "byYear": "年",
+    "last30Days": "近 30 天",
+    "last12Months": "近 12 个月",
+    "last10Years": "近 10 年",
+    "times_other": "{{count}} 次",
+    "prevMonth": "上个月",
+    "nextMonth": "下个月",
+    "clearFilter": "清除筛选"
   },
   "meter": {
     "intensity": "强度",

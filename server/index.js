@@ -10,6 +10,7 @@ import {
   deleteKnot,
   deleteKnotName,
   getKnotNames,
+  getKnotNameStats,
   getKnots,
   getUser,
   renameKnotName,
@@ -164,6 +165,14 @@ app.get("/api/knot-names", requireSession, (req, res) => {
   const parsedLimit = Number(req.query.limit);
   const limit = Number.isInteger(parsedLimit) ? Math.min(200, Math.max(1, parsedLimit)) : 8;
   res.json({ names: getKnotNames(req.user.id, limit) });
+});
+
+app.get("/api/knot-names/:nameId/stats", requireSession, (req, res) => {
+  const nameId = Number(req.params.nameId);
+  if (!Number.isInteger(nameId) || nameId < 1) return res.status(400).json({ error: "绳 ID 无效" });
+  const stats = getKnotNameStats(req.user.id, nameId);
+  if (!stats) return res.status(404).json({ error: "绳不存在", code: "NAME_NOT_FOUND" });
+  res.json(stats);
 });
 
 app.post("/api/knot-names", requireSession, (req, res) => {

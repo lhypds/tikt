@@ -4,6 +4,7 @@
   },
   "header": {
     "backHome": "Back to home",
+    "back": "Back",
     "history": "Knots",
     "account": "Account",
     "mute": "Mute",
@@ -69,6 +70,19 @@
     "deleteTitle": "Delete rope",
     "deleteConfirm": "Delete “{{name}}” and all its records? This cannot be undone.",
     "cancel": "Cancel"
+  },
+  "knotStats": {
+    "byDay": "Day",
+    "byMonth": "Month",
+    "byYear": "Year",
+    "last30Days": "Last 30 days",
+    "last12Months": "Last 12 months",
+    "last10Years": "Last 10 years",
+    "times_one": "{{count}} time",
+    "times_other": "{{count}} times",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "clearFilter": "Clear filter"
   },
   "meter": {
     "intensity": "Intensity",

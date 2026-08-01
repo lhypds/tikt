@@ -4,6 +4,7 @@
   },
   "header": {
     "backHome": "ホームへ戻る",
+    "back": "戻る",
     "history": "結",
     "account": "アカウント",
     "mute": "ミュート",
@@ -69,6 +70,18 @@
     "deleteTitle": "縄を削除",
     "deleteConfirm": "「{{name}}」とそのすべての記録を削除しますか？この操作は取り消せません。",
     "cancel": "キャンセル"
+  },
+  "knotStats": {
+    "byDay": "日",
+    "byMonth": "月",
+    "byYear": "年",
+    "last30Days": "直近30日",
+    "last12Months": "直近12か月",
+    "last10Years": "直近10年",
+    "times_other": "{{count}}回",
+    "prevMonth": "前の月",
+    "nextMonth": "次の月",
+    "clearFilter": "絞り込みを解除"
   },
   "meter": {
     "intensity": "強度",
