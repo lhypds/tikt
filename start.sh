@@ -11,7 +11,7 @@ if [ ! -d dist ]; then
   exit 1
 fi
 
-pm2 start ecosystem.cjs --update-env
+pm2 start ecosystem.config.cjs --update-env
 
 # Read PORT from .env for display
 PORT=$(grep '^PORT=' "$ROOT/.env" 2>/dev/null | cut -d= -f2 || echo 3001)
