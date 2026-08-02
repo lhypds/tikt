@@ -59,7 +59,8 @@ export default function AuthPage() {
               }}
               autoCapitalize="none"
               autoCorrect="off"
-              autoComplete="username"
+              autoComplete="off"
+              enterKeyHint="go"
               placeholder={t("auth.username")}
               maxLength={32}
             />
