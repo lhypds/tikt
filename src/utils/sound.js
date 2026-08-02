@@ -10,6 +10,7 @@ const TONE_GAIN = 0.06;
 let context = null;
 let oscillator = null;
 let gain = null;
+let pressToken = 0;
 
 let muted = readStoredMute();
 const muteListeners = new Set();
