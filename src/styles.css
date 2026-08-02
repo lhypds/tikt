@@ -1036,6 +1036,10 @@ a {
 }
 
 @media (max-width: 420px) {
+  .topbar {
+    padding-inline: 12px;
+  }
+
   .tile-carousel {
     --tile-gap: 10px;
     --tile-pad: 12px;
