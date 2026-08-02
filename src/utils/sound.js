@@ -54,8 +54,18 @@ function ensureContext() {
     if (!AudioContextClass) return null;
     context = new AudioContextClass();
   }
-  if (context.state === "suspended") context.resume();
   return context;
+}
+
+// A freshly created (or backgrounded) context reports "suspended" and resume()
+// is async, so callers must wait for it before scheduling anything — otherwise
+// the very first tone gets silently dropped while the hardware spins up.
+function whenRunning(activeContext, callback) {
+  if (activeContext.state === "suspended") {
+    activeContext.resume().then(callback);
+  } else {
+    callback();
+  }
 }
 
 // Call from inside a pointerdown/touchstart/keydown handler.
@@ -64,16 +74,20 @@ export function startPressTone(intensity) {
   const activeContext = ensureContext();
   if (!activeContext) return;
   stopPressTone();
-  const now = activeContext.currentTime;
-  oscillator = activeContext.createOscillator();
-  gain = activeContext.createGain();
-  oscillator.type = "sine";
-  oscillator.frequency.setValueAtTime(toneFrequency(intensity), now);
-  gain.gain.setValueAtTime(0.0001, now);
-  gain.gain.exponentialRampToValueAtTime(TONE_GAIN, now + 0.04);
-  oscillator.connect(gain);
-  gain.connect(activeContext.destination);
-  oscillator.start(now);
+  const token = ++pressToken;
+  whenRunning(activeContext, () => {
+    if (token !== pressToken) return; // stopped/replaced before resume finished
+    const now = activeContext.currentTime;
+    oscillator = activeContext.createOscillator();
+    gain = activeContext.createGain();
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(toneFrequency(intensity), now);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(TONE_GAIN, now + 0.04);
+    oscillator.connect(gain);
+    gain.connect(activeContext.destination);
+    oscillator.start(now);
+  });
 }
 
 // One short blip at the given intensity's pitch, e.g. when the user taps a
@@ -82,18 +96,20 @@ export function playIntensityBlip(intensity) {
   if (muted) return;
   const activeContext = ensureContext();
   if (!activeContext) return;
-  const now = activeContext.currentTime;
-  const blipOscillator = activeContext.createOscillator();
-  const blipGain = activeContext.createGain();
-  blipOscillator.type = "sine";
-  blipOscillator.frequency.setValueAtTime(toneFrequency(intensity), now);
-  blipGain.gain.setValueAtTime(0.0001, now);
-  blipGain.gain.exponentialRampToValueAtTime(TONE_GAIN, now + 0.02);
-  blipGain.gain.setTargetAtTime(0.0001, now + 0.12, 0.03);
-  blipOscillator.connect(blipGain);
-  blipGain.connect(activeContext.destination);
-  blipOscillator.start(now);
-  blipOscillator.stop(now + 0.3);
+  whenRunning(activeContext, () => {
+    const now = activeContext.currentTime;
+    const blipOscillator = activeContext.createOscillator();
+    const blipGain = activeContext.createGain();
+    blipOscillator.type = "sine";
+    blipOscillator.frequency.setValueAtTime(toneFrequency(intensity), now);
+    blipGain.gain.setValueAtTime(0.0001, now);
+    blipGain.gain.exponentialRampToValueAtTime(TONE_GAIN, now + 0.02);
+    blipGain.gain.setTargetAtTime(0.0001, now + 0.12, 0.03);
+    blipOscillator.connect(blipGain);
+    blipGain.connect(activeContext.destination);
+    blipOscillator.start(now);
+    blipOscillator.stop(now + 0.3);
+  });
 }
 
 export function updatePressTone(intensity) {
@@ -102,6 +118,7 @@ export function updatePressTone(intensity) {
 }
 
 export function stopPressTone() {
+  pressToken++;
   if (!oscillator || !gain || !context) return;
   const now = context.currentTime;
   const finishedOscillator = oscillator;
