@@ -45,22 +45,33 @@ export default function AuthPage() {
           tikt
         </h1>
         <p className="tagline">{t("auth.tagline")}</p>
-        <form className="login-form" onSubmit={submit}>
-          <label className="sr-only" htmlFor="login-username">
+        <form className="login-form" onSubmit={submit} autoComplete="off">
+          <label className="sr-only" htmlFor="tikt-handle">
             {t("auth.username")}
           </label>
           <div className="joined-field">
             <input
-              id="login-username"
+              id="tikt-handle"
+              name="tikt-handle"
               value={username}
               onChange={(event) => {
                 setUsername(event.target.value);
                 setError("");
               }}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  submit(event);
+                }
+              }}
               autoCapitalize="none"
               autoCorrect="off"
               autoComplete="off"
               enterKeyHint="go"
+              data-1p-ignore
+              data-lpignore="true"
+              data-bwignore
+              data-form-type="other"
               placeholder={t("auth.username")}
               maxLength={32}
             />
