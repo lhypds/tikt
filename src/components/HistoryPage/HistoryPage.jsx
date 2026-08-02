@@ -41,7 +41,10 @@ export default function HistoryPage() {
       <Header back />
       <main className="list-page">
         <div className="section-heading">
-          <h1>{t("history.title")}</h1>
+          <div className="section-heading-titles">
+            <h1>{t("history.title")}</h1>
+            <p className="section-subtitle">{t("history.subtitle")}</p>
+          </div>
           <span>{knots.length}</span>
         </div>
         {deleteError && (

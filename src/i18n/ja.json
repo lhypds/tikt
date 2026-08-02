@@ -44,6 +44,8 @@
     "namePlaceholder": "記録名",
     "nameRequired": "先に記録名を入力してください",
     "saved": "記録しました",
+    "undo": "取り消す",
+    "cancelled": "取り消しました",
     "holdToRecord": "長押しで記録",
     "keepHolding": "そのまま押し続ける",
     "saving": "保存中",
@@ -52,12 +54,14 @@
   },
   "history": {
     "title": "結",
+    "subtitle": "結はできごとのこと",
     "empty": "まだ記録がありません",
     "delete": "削除",
     "deleting": "削除中"
   },
   "knots": {
     "title": "縄",
+    "subtitle": "縄はタイムラインのこと",
     "createTitle": "縄を作成",
     "editTitle": "縄を編集",
     "create": "作成",

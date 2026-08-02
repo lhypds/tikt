@@ -44,6 +44,8 @@
     "namePlaceholder": "记录名称",
     "nameRequired": "请先输入记录名称",
     "saved": "已记录",
+    "undo": "撤销",
+    "cancelled": "已取消",
     "holdToRecord": "按住记录",
     "keepHolding": "保持按压",
     "saving": "保存中",
@@ -52,12 +54,14 @@
   },
   "history": {
     "title": "结",
+    "subtitle": "一个结就是一个事件",
     "empty": "还没有记录",
     "delete": "删除",
     "deleting": "删除中"
   },
   "knots": {
     "title": "绳",
+    "subtitle": "一根绳就是一条时间线",
     "createTitle": "新建绳",
     "editTitle": "编辑绳",
     "create": "创建",

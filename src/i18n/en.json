@@ -44,6 +44,8 @@
     "namePlaceholder": "Record name",
     "nameRequired": "Enter a record name first",
     "saved": "Recorded",
+    "undo": "Undo",
+    "cancelled": "Cancelled",
     "holdToRecord": "Hold to record",
     "keepHolding": "Keep holding",
     "saving": "Saving",
@@ -52,12 +54,14 @@
   },
   "history": {
     "title": "Knots",
+    "subtitle": "a knot is an event",
     "empty": "No records yet",
     "delete": "Delete",
     "deleting": "Deleting"
   },
   "knots": {
     "title": "Ropes",
+    "subtitle": "a rope is a timeline",
     "createTitle": "Create rope",
     "editTitle": "Edit rope",
     "create": "Create",

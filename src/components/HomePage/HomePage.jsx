@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import * as api from "../../api.js";
-import { IntensityMeter } from "../../ui/index.js";
+import { IntensityMeter, showToast } from "../../ui/index.js";
 import { playIntensityBlip, startPressTone, stopPressTone, updatePressTone } from "../../utils/sound.js";
 import Header from "../Header/index.js";
 
@@ -28,6 +28,7 @@ export default function HomePage() {
   const [pressedName, setPressedName] = useState("");
   const [savingName, setSavingName] = useState("");
   const [message, setMessage] = useState("");
+  const [recordedKnot, setRecordedKnot] = useState(null);
   const activeRef = useRef(false);
   const activeNameRef = useRef("");
   const startRef = useRef(0);
@@ -110,6 +111,7 @@ export default function HomePage() {
     updateIntensity(armedIntensity ?? 1);
     setPressedName(recordName);
     setMessage("");
+    setRecordedKnot(null);
     if (armedIntensity === null) {
       startPressTone(intensityRef.current);
       timerRef.current = window.setInterval(() => {
@@ -125,6 +127,7 @@ export default function HomePage() {
     stopPressTone();
     const recordName = activeNameRef.current;
     const recordedIntensity = intensityRef.current;
+    const previousNames = names;
     setPressedName("");
     setSavingName(recordName);
 
@@ -147,6 +150,7 @@ export default function HomePage() {
       });
       if (navigator.vibrate) navigator.vibrate(20);
       setMessage(t("record.saved"));
+      setRecordedKnot({ id: knot.id, previousNames });
     } catch (requestError) {
       setMessage(requestError.message);
     } finally {
@@ -154,8 +158,25 @@ export default function HomePage() {
       setSavingName("");
       messageTimerRef.current = window.setTimeout(() => {
         setMessage("");
+        setRecordedKnot(null);
         updateIntensity(1);
-      }, 900);
+      }, 2000);
+    }
+  }
+
+  async function undoRecord() {
+    if (!recordedKnot) return;
+    window.clearTimeout(messageTimerRef.current);
+    const { id, previousNames } = recordedKnot;
+    setRecordedKnot(null);
+    setMessage("");
+    updateIntensity(1);
+    try {
+      await api.deleteKnot(id);
+      setNames(previousNames);
+      showToast(t("record.cancelled"), 1800);
+    } catch (requestError) {
+      setMessage(requestError.message);
     }
   }
 
@@ -304,7 +325,17 @@ export default function HomePage() {
         <div className="home-meter">
           <IntensityMeter value={intensity} onSelect={selectIntensity} />
           <p className="home-record-message" aria-live="polite">
-            {message || t("record.hintDuration")}
+            {recordedKnot ? (
+              <>
+                {message} (
+                <button type="button" className="undo-link" onClick={undoRecord}>
+                  {t("record.undo")}
+                </button>
+                )
+              </>
+            ) : (
+              message || t("record.hintDuration")
+            )}
           </p>
         </div>
 

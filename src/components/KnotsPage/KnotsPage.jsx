@@ -67,7 +67,10 @@ export default function KnotsPage() {
       <Header back />
       <main className="list-page">
         <div className="section-heading">
-          <h1>{t("knots.title")}</h1>
+          <div className="section-heading-titles">
+            <h1>{t("knots.title")}</h1>
+            <p className="section-subtitle">{t("knots.subtitle")}</p>
+          </div>
           <span>{names.length}</span>
         </div>
         {loading ? null : error ? (
