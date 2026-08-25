@@ -95,7 +95,8 @@
     "nextMonth": "Next month",
     "clearFilter": "Clear filter",
     "mapAria": "Map of recorded locations",
-    "mapNoToken": "Set VITE_MAPBOX_TOKEN to display the map."
+    "mapNoToken": "Set VITE_MAPBOX_TOKEN to display the map.",
+    "mapFailed": "The map could not be loaded."
   },
   "meter": {
     "intensity": "Intensity",

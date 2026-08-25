@@ -1,15 +1,12 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import * as api from "../../api.js";
 import Header from "../Header/index.js";
 import HistoryKnotItem from "../HistoryKnotItem/index.js";
+import KnotMap from "./KnotMap.jsx";
 import StatsBarChart from "./StatsBarChart.jsx";
 import StatsCalendar from "./StatsCalendar.jsx";
 import { DATE_LOCALES, dayKey, monthKey } from "./dates.js";
-
-// Mapbox is far heavier than the rest of the app put together, so it is fetched
-// only once a rope that actually has coordinates is opened.
-const KnotMap = lazy(() => import("./KnotMap.jsx"));
 
 const FILTER_LABEL_FORMATS = {
   day: { year: "numeric", month: "long", day: "numeric" },
@@ -131,11 +128,7 @@ export default function KnotStatsPage({ nameId }) {
               selected={filter}
               onSelect={(type, key) => toggleFilter({ type, key })}
             />
-            {hasLocations && (
-              <Suspense fallback={<section className="stats-block knot-map-placeholder" />}>
-                <KnotMap knots={locatedKnots} />
-              </Suspense>
-            )}
+            {hasLocations && <KnotMap knots={locatedKnots} />}
             <section className="stats-list">
               {deleteError && (
                 <p className="history-error" role="alert">

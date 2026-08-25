@@ -5,9 +5,10 @@
   "type": "module",
   "packageManager": "pnpm@11.22.0",
   "scripts": {
-    "dev": "node --watch-path=server --watch-path=src server/index.js",
+    "vendor": "node scripts/copy-mapbox.js",
+    "dev": "node scripts/copy-mapbox.js && node --watch-path=server --watch-path=src server/index.js",
     "server": "node server/index.js",
-    "build": "vite build",
+    "build": "node scripts/copy-mapbox.js && vite build",
     "preview": "NODE_ENV=production node server/index.js",
     "start": "NODE_ENV=production node server/index.js"
   },

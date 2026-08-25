@@ -94,7 +94,8 @@
     "nextMonth": "下个月",
     "clearFilter": "清除筛选",
     "mapAria": "记录位置地图",
-    "mapNoToken": "未配置 VITE_MAPBOX_TOKEN，无法显示地图"
+    "mapNoToken": "未配置 VITE_MAPBOX_TOKEN，无法显示地图",
+    "mapFailed": "地图加载失败"
   },
   "meter": {
     "intensity": "强度",
