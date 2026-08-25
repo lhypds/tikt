@@ -40,6 +40,22 @@ function normalizeUsername(value) {
   return String(value ?? "").trim().normalize("NFKC").toLowerCase();
 }
 
+// Coordinates ride along with a knot only when the client has location on.
+// Returns undefined when none were sent and null when they make no sense.
+function parseLocation(body) {
+  if (body?.latitude == null && body?.longitude == null) return undefined;
+  const latitude = Number(body?.latitude);
+  const longitude = Number(body?.longitude);
+  if (!Number.isFinite(latitude) || Math.abs(latitude) > 90) return null;
+  if (!Number.isFinite(longitude) || Math.abs(longitude) > 180) return null;
+  const accuracy = Number(body?.accuracy);
+  return {
+    latitude,
+    longitude,
+    accuracy: Number.isFinite(accuracy) && accuracy >= 0 ? accuracy : null,
+  };
+}
+
 function cookieValue(req, name) {
   const prefix = `${name}=`;
   const part = String(req.headers.cookie ?? "")
@@ -207,17 +223,20 @@ app.post("/api/knots", requireSession, (req, res) => {
   const name = String(req.body?.name ?? "").trim().normalize("NFKC");
   const intensity = Number(req.body?.intensity);
   const suppliedTime = req.body?.time ? new Date(req.body.time) : new Date();
+  const location = parseLocation(req.body);
 
   if (!name || name.length > 48) return res.status(400).json({ error: "记录名称需要 1–48 个字符" });
   if (!Number.isInteger(intensity) || intensity < 1 || intensity > 10) {
     return res.status(400).json({ error: "强度需要在 1–10 之间" });
   }
   if (Number.isNaN(suppliedTime.getTime())) return res.status(400).json({ error: "记录时间无效" });
+  if (location === null) return res.status(400).json({ error: "记录位置无效" });
 
   const knot = createKnot(req.user.id, {
     name,
     intensity,
     time: suppliedTime.toISOString(),
+    ...location,
   });
   res.status(201).json({ knot });
 });

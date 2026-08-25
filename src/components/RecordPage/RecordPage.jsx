@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import * as api from "../../api.js";
 import { IntensityMeter, useNavigate, useSearchParams } from "../../ui/index.js";
+import { captureLocation, primeLocation } from "../../utils/location.js";
 import { startPressTone, stopPressTone, updatePressTone } from "../../utils/sound.js";
 import Header from "../Header/index.js";
 
@@ -34,6 +35,7 @@ export default function RecordPage() {
     }
     activeRef.current = true;
     startRef.current = performance.now();
+    primeLocation();
     updateIntensity(1);
     startPressTone(intensityRef.current);
     setPressed(true);
@@ -51,11 +53,15 @@ export default function RecordPage() {
     stopPressTone();
     setPressed(false);
     setSaving(true);
+    // Stamp the moment the press ended, then let the position catch up.
+    const time = new Date().toISOString();
     try {
+      const coords = await captureLocation();
       await api.createKnot({
         name: name.trim().normalize("NFKC"),
         intensity: intensityRef.current,
-        time: new Date().toISOString(),
+        time,
+        ...coords,
       });
       if (navigator.vibrate) navigator.vibrate(20);
       setMessage(t("record.saved"));

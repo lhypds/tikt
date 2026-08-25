@@ -12,6 +12,8 @@ export default function HistoryKnotItem({ knot, formattedTime, onDelete }) {
   const [deleting, setDeleting] = useState(false);
   const offsetRef = useRef(0);
   const dragRef = useRef(null);
+  const hasLocation = knot.latitude != null && knot.longitude != null;
+  const coordinates = hasLocation ? `${knot.latitude.toFixed(4)}, ${knot.longitude.toFixed(4)}` : "";
 
   function moveTo(nextOffset) {
     const next = Math.max(-REVEAL_WIDTH, Math.min(0, nextOffset));
@@ -85,7 +87,17 @@ export default function HistoryKnotItem({ knot, formattedTime, onDelete }) {
       >
         <div className="knot-copy">
           <strong>{knot.name}</strong>
-          <time dateTime={knot.time}>{formattedTime}</time>
+          <span className="knot-time-row">
+            <time dateTime={knot.time}>{formattedTime}</time>
+            {hasLocation && (
+              <span className="knot-geo" title={coordinates} aria-label={`${t("location.title")} ${coordinates}`}>
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 21c4-5 6-8.2 6-11a6 6 0 1 0-12 0c0 2.8 2 6 6 11Z" />
+                  <circle cx="12" cy="10" r="2" />
+                </svg>
+              </span>
+            )}
+          </span>
         </div>
         <IntensityMeter value={knot.intensity} compact />
       </div>

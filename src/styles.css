@@ -695,6 +695,27 @@ a {
   font-size: 10px;
 }
 
+.knot-time-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.knot-geo {
+  display: inline-flex;
+  color: var(--muted);
+}
+
+.knot-geo svg {
+  width: 10px;
+  height: 10px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .history-meter {
   gap: 3px;
 }
@@ -723,6 +744,46 @@ a {
 .stats-block + .stats-block {
   border-top: 1px solid var(--ink);
   padding-top: 26px;
+}
+
+.knot-map,
+.knot-map-placeholder {
+  height: 260px;
+  border: 1px solid var(--ink);
+}
+
+.knot-map-missing {
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--ink);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+/* Mapbox draws its own chrome rounded and shadowed; this is a black-and-white page. */
+.knot-map .mapboxgl-popup-content {
+  padding: 4px 8px;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  box-shadow: none;
+  font-family: var(--mono);
+  font-size: 10px;
+}
+
+.knot-map .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+  border-top-color: var(--ink);
+}
+
+.knot-map .mapboxgl-popup-anchor-top .mapboxgl-popup-tip {
+  border-bottom-color: var(--ink);
+}
+
+.knot-map .mapboxgl-ctrl-attrib {
+  font-size: 10px;
+}
+
+.knot-map .mapboxgl-ctrl-attrib a.mapbox-improve-map {
+  display: none;
 }
 
 .stats-list {

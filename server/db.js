@@ -24,6 +24,9 @@ db.exec(`
     time TEXT NOT NULL,
     intensity INTEGER NOT NULL CHECK (intensity BETWEEN 1 AND 10),
     name TEXT NOT NULL,
+    latitude REAL,
+    longitude REAL,
+    accuracy REAL,
     created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
   );
 
@@ -65,6 +68,12 @@ if (userColumns.includes("age") || userColumns.includes("email")) {
   db.exec("ALTER TABLE users ADD COLUMN birthdate TEXT");
 }
 
+// Knots recorded before the location switch existed simply have no coordinates.
+const knotColumns = db.prepare("SELECT name FROM pragma_table_info('knots')").all().map((column) => column.name);
+for (const column of ["latitude", "longitude", "accuracy"]) {
+  if (!knotColumns.includes(column)) db.exec(`ALTER TABLE knots ADD COLUMN ${column} REAL`);
+}
+
 function withTransaction(run) {
   db.exec("BEGIN");
   try {
@@ -89,18 +98,18 @@ const insertUser = db.prepare(`
 `);
 
 const insertKnot = db.prepare(`
-  INSERT INTO knots (user_id, time, intensity, name)
-  VALUES (?, ?, ?, ?)
+  INSERT INTO knots (user_id, time, intensity, name, latitude, longitude, accuracy)
+  VALUES (?, ?, ?, ?, ?, ?, ?)
 `);
 
 const selectKnotById = db.prepare(`
-  SELECT id, time, intensity, name
+  SELECT id, time, intensity, name, latitude, longitude, accuracy
   FROM knots
   WHERE id = ? AND user_id = ?
 `);
 
 const selectKnots = db.prepare(`
-  SELECT id, time, intensity, name
+  SELECT id, time, intensity, name, latitude, longitude, accuracy
   FROM knots
   WHERE user_id = ?
   ORDER BY time DESC, id DESC
@@ -118,7 +127,7 @@ const selectNames = db.prepare(`
 `);
 
 const selectKnotsByName = db.prepare(`
-  SELECT id, time, intensity, name
+  SELECT id, time, intensity, name, latitude, longitude, accuracy
   FROM knots
   WHERE user_id = ? AND name = ?
   ORDER BY time DESC, id DESC
@@ -185,9 +194,17 @@ export function createUser({ username, birthdate }) {
   return getUser(username);
 }
 
-export function createKnot(userId, { time, intensity, name }) {
+export function createKnot(userId, { time, intensity, name, latitude, longitude, accuracy }) {
   insertKnotName.run(userId, name);
-  const result = insertKnot.run(userId, time, intensity, name);
+  const result = insertKnot.run(
+    userId,
+    time,
+    intensity,
+    name,
+    latitude ?? null,
+    longitude ?? null,
+    accuracy ?? null,
+  );
   return selectKnotById.get(Number(result.lastInsertRowid), userId);
 }
 

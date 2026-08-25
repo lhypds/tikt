@@ -10,6 +10,13 @@
     "mute": "静音",
     "unmute": "取消静音"
   },
+  "location": {
+    "title": "记录位置",
+    "on": "开启位置记录",
+    "off": "关闭位置记录",
+    "denied": "位置权限被拒绝，已关闭",
+    "unsupported": "当前设备不支持定位"
+  },
   "auth": {
     "tagline": "在时间里，打一个结点。",
     "username": "用户名",
@@ -85,7 +92,9 @@
     "times_other": "{{count}} 次",
     "prevMonth": "上个月",
     "nextMonth": "下个月",
-    "clearFilter": "清除筛选"
+    "clearFilter": "清除筛选",
+    "mapAria": "记录位置地图",
+    "mapNoToken": "未配置 VITE_MAPBOX_TOKEN，无法显示地图"
   },
   "meter": {
     "intensity": "强度",

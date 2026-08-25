@@ -6,6 +6,7 @@ import { isSoundMuted, setSoundMuted, subscribeSoundMuted } from "../../utils/so
 import { useAuth } from "../AuthProvider/index.js";
 import KnotModal from "../KnotModal/index.js";
 import LanguageSwitcher from "../LanguageSwitcher/index.js";
+import LocationSwitcher from "../LocationSwitcher/index.js";
 
 export default function Header({ back = false, backTo = "/" }) {
   const { t } = useTranslation();
@@ -83,6 +84,7 @@ export default function Header({ back = false, backTo = "/" }) {
             </svg>
           )}
         </ActionButton>
+        {user && <LocationSwitcher />}
         {user && (
           <ActionButton tooltip={t("header.account")} onClick={() => navigate("/account")}>
             <svg viewBox="0 0 24 24">

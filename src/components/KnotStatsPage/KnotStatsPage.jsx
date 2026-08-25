@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import * as api from "../../api.js";
 import Header from "../Header/index.js";
@@ -6,6 +6,10 @@ import HistoryKnotItem from "../HistoryKnotItem/index.js";
 import StatsBarChart from "./StatsBarChart.jsx";
 import StatsCalendar from "./StatsCalendar.jsx";
 import { DATE_LOCALES, dayKey, monthKey } from "./dates.js";
+
+// Mapbox is far heavier than the rest of the app put together, so it is fetched
+// only once a rope that actually has coordinates is opened.
+const KnotMap = lazy(() => import("./KnotMap.jsx"));
 
 const FILTER_LABEL_FORMATS = {
   day: { year: "numeric", month: "long", day: "numeric" },
@@ -71,6 +75,16 @@ export default function KnotStatsPage({ nameId }) {
     return knots.filter((knot) => knotFilterKey(knot, filter.type) === filter.key);
   }, [stats, filter]);
 
+  const hasLocations = useMemo(
+    () => (stats?.knots ?? []).some((knot) => knot.latitude != null && knot.longitude != null),
+    [stats],
+  );
+
+  const locatedKnots = useMemo(
+    () => visibleKnots.filter((knot) => knot.latitude != null && knot.longitude != null),
+    [visibleKnots],
+  );
+
   function toggleFilter(next) {
     setFilter((current) =>
       current && current.type === next.type && current.key === next.key ? null : next,
@@ -117,6 +131,11 @@ export default function KnotStatsPage({ nameId }) {
               selected={filter}
               onSelect={(type, key) => toggleFilter({ type, key })}
             />
+            {hasLocations && (
+              <Suspense fallback={<section className="stats-block knot-map-placeholder" />}>
+                <KnotMap knots={locatedKnots} />
+              </Suspense>
+            )}
             <section className="stats-list">
               {deleteError && (
                 <p className="history-error" role="alert">

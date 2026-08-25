@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import * as api from "../../api.js";
 import { IntensityMeter, showToast } from "../../ui/index.js";
+import { captureLocation, primeLocation } from "../../utils/location.js";
 import { playIntensityBlip, startPressTone, stopPressTone, updatePressTone } from "../../utils/sound.js";
 import Header from "../Header/index.js";
 
@@ -108,6 +109,7 @@ export default function HomePage() {
     activeRef.current = true;
     activeNameRef.current = recordName;
     startRef.current = performance.now();
+    primeLocation();
     updateIntensity(armedIntensity ?? 1);
     setPressedName(recordName);
     setMessage("");
@@ -130,12 +132,16 @@ export default function HomePage() {
     const previousNames = names;
     setPressedName("");
     setSavingName(recordName);
+    // Stamp the moment the press ended, then let the position catch up.
+    const time = new Date().toISOString();
 
     try {
+      const coords = await captureLocation();
       const { knot } = await api.createKnot({
         name: recordName,
         intensity: recordedIntensity,
-        time: new Date().toISOString(),
+        time,
+        ...coords,
       });
       setNames((current) => {
         const existing = current.find((item) => item.name === recordName);

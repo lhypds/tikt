@@ -10,6 +10,13 @@
     "mute": "Mute",
     "unmute": "Unmute"
   },
+  "location": {
+    "title": "Record location",
+    "on": "Turn location on",
+    "off": "Turn location off",
+    "denied": "Location permission denied — turned off",
+    "unsupported": "This device has no location support"
+  },
   "auth": {
     "tagline": "Tie a knot in time.",
     "username": "Username",
@@ -86,7 +93,9 @@
     "times_other": "{{count}} times",
     "prevMonth": "Previous month",
     "nextMonth": "Next month",
-    "clearFilter": "Clear filter"
+    "clearFilter": "Clear filter",
+    "mapAria": "Map of recorded locations",
+    "mapNoToken": "Set VITE_MAPBOX_TOKEN to display the map."
   },
   "meter": {
     "intensity": "Intensity",
