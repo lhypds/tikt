@@ -35,7 +35,7 @@
   left: 50%;
   z-index: 999;
   padding: 3px 8px;
-  transform: translateX(-50%);
+  transform: translateX(calc(-50% + var(--tooltip-shift, 0px)));
   border: 1px solid var(--ink);
   background: var(--paper);
   color: var(--ink);
