@@ -1,7 +1,8 @@
 import { Children, cloneElement } from "react";
 import styles from "./action.module.css";
 
-const EDGE_GAP = 6;
+// Matches the topbar side padding, so tooltips line up with the page content.
+const EDGE_GAP = 16;
 
 // The tooltip is centered under the button; shift it sideways when that would
 // push it past the edge of the page.
